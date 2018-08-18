@@ -103,6 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
+        android:focusable="true"
         app:srcCompat="@drawable/ic_share"/>
 
 </com.example.xyzreader.ui.DrawInsetsFrameLayout>
