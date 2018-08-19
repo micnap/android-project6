@@ -164,7 +164,6 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        bindViews();
         updateStatusBar();
         return mRootView;
     }
