@@ -89,6 +89,14 @@
                     android:textSize="@dimen/detail_body_text_size"
                     android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier" />
 
+                <Button
+                    android:id="@+id/btn_continue_reading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="continueReading"
+                    android:text="@string/continue_reading"
+                    android:visibility="invisible"/>
+
             </com.example.xyzreader.ui.MaxWidthLinearLayout>
         </FrameLayout>
     </com.example.xyzreader.ui.ObservableScrollView>

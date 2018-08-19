@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,6 +55,7 @@ public class ArticleDetailFragment extends Fragment implements
     private ObservableScrollView mScrollView;
     private DrawInsetsFrameLayout mDrawInsetsFrameLayout;
     private ColorDrawable mStatusBarColorDrawable;
+    private Button mContinueReading;
 
     private int mTopInset;
     private View mPhotoContainerView;
@@ -62,11 +64,18 @@ public class ArticleDetailFragment extends Fragment implements
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
 
+    private TextView bodyView;
+    private String[] bodyText;
+    private int lastParagraphShown = 0;
+
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss", Locale.US);
     // Use default locale format
     private final SimpleDateFormat outputFormat = new SimpleDateFormat();
     // Most time functions can only handle 1902 - 2037
     private final GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2,1,1);
+    // Article body text is too long to load into a textview at once.  It is split into paragraphs
+    // and the following number of paragraphs are shown at a time as the user clicks on Continue Reading button.
+    private static final int NUM_PARAGRAPHS_TO_SHOW = 3;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -142,6 +151,9 @@ public class ArticleDetailFragment extends Fragment implements
 
         mStatusBarColorDrawable = new ColorDrawable(0);
 
+        mContinueReading = mRootView.findViewById(R.id.btn_continue_reading);
+        mContinueReading.setOnClickListener(continueReadingClickListener);
+
         mRootView.findViewById(R.id.floatingActionButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -205,7 +217,10 @@ public class ArticleDetailFragment extends Fragment implements
         TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+
+        bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+        // Setting to empty so that when the actual text gets appended, an "N/A" doesn't show up before the text.
+        bodyView.setText("");
 
 
         bodyView.setTypeface(
@@ -235,10 +250,9 @@ public class ArticleDetailFragment extends Fragment implements
 
             }
 
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)
-                    .substring(0, 1000)
-                    .replaceAll("(\r\n\r\n)", "<br /><br />")
-                    .replaceAll("(\r\n|\n)", "")));
+            // Split the body text into paragraphs.
+            bodyText = mCursor.getString(ArticleLoader.Query.BODY).split("(\r\n\r\n)");
+            appendBodytext(true);
 
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
@@ -311,5 +325,33 @@ public class ArticleDetailFragment extends Fragment implements
         return mIsCard
                 ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
                 : mPhotoView.getHeight() - mScrollY;
+    }
+
+    private View.OnClickListener continueReadingClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            appendBodytext(false);
+        }
+    };
+
+    private void appendBodytext(Boolean first) {
+        String spacer = "";
+        for (int i = 0; i < NUM_PARAGRAPHS_TO_SHOW; i++) {
+            if (!first || i > 0) {
+                spacer = "<br /><br />";
+            }
+            if (i < bodyText.length) {
+                bodyView.append(Html.fromHtml(spacer +  bodyText[lastParagraphShown].replaceAll("(\r\n|\n)", " ")));
+                lastParagraphShown++;
+                if (lastParagraphShown >= bodyText.length) {
+                    mContinueReading.setVisibility(View.INVISIBLE);
+                    return;
+
+                } else {
+                    mContinueReading.setVisibility(View.VISIBLE);
+                }
+            }
+        }
     }
 }
