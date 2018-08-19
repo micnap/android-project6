@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/list_padding_left"
-        android:paddingRight="@dimen/list_padding_right"
+        android:paddingStart="@dimen/list_padding_left"
+        android:paddingEnd="@dimen/list_padding_right"
         android:paddingTop="@dimen/list_padding_top_4"
         android:paddingBottom="@dimen/list_padding_bottom_4">
 
@@ -36,8 +36,8 @@
                 android:ellipsize="end"
                 android:maxLines="4"
                 android:paddingBottom="@dimen/list_padding_bottom_4"
-                android:paddingLeft="@dimen/list_padding_left"
-                android:paddingRight="@dimen/list_padding_right"
+                android:paddingStart="@dimen/list_padding_left"
+                android:paddingEnd="@dimen/list_padding_right"
                 android:paddingTop="@dimen/list_padding_top"
                 android:textColor="?colorPrimaryDark"
                 android:textStyle="bold"/>
@@ -47,8 +47,8 @@
                     style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/list_padding_left"
-                    android:paddingRight="@dimen/list_padding_right"
+                    android:paddingStart="@dimen/list_padding_left"
+                    android:paddingEnd="@dimen/list_padding_right"
                     android:paddingBottom="@dimen/list_padding_bottom_16"
                     android:textColor="@color/dkgray"
                     android:maxLines="2"
